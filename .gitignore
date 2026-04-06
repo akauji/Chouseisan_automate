@@ -29,8 +29,11 @@ tests/reports/
 .idea/
 *.swp
 
-# Claude Code ローカル設定（環境固有）
-.claude/settings.local.json
+# Claude Code（開発内部設定・非公開）
+.claude/
+
+# 実装計画（開発内部ドキュメント・非公開）
+docs/implementation_plan.md
 
 # OS
 .DS_Store
