@@ -18,6 +18,7 @@ GUIで設定を入力し、候補日時を生成、Seleniumでブラウザを操
 - マジックナンバーは `src/config/constants.py` に定数として定義する
 - ログは `src/utils/logger.py` の `get_logger(__name__)` を使用する
 - 例外は `src/exceptions/exceptions.py` のアプリ例外クラスを使用する（組み込み例外を直接raiseしない）
+- 実装が完了したら、コミットをすること
 
 ## 禁止事項
 
