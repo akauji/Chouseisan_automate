@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# 仮想環境
+.venv/
+venv/
+env/
+
+# テスト・カバレッジ
+.pytest_cache/
+.coverage
+htmlcov/
+tests/reports/
+
+# 型チェック
+.mypy_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Claude Code ローカル設定（環境固有）
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# アプリ生成ファイル（ファイル経由連携は廃止だが念のため）
+output.txt
+setting.csv
+ListURL.txt
+bulk_results.csv
+
+# プロファイル（ユーザーデータ）
+profiles/
+
+# ログ
+*.log
+logs/
+
+# 機密情報
+.env
+secrets.json
+
+# バックアップ残骸
+*.bak
+backup/
