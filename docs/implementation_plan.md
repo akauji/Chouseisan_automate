@@ -6,15 +6,15 @@
 
 | # | タスク | 対象ファイル | 状態 |
 |---|---|---|---|
-| 1-1 | プロジェクト初期設定 | `requirements.txt`, `main.py`, `src/__init__.py` 等 | ⬜ 未着手 |
-| 1-2 | 例外クラス実装 | `src/exceptions/exceptions.py` | ⬜ 未着手 |
-| 1-3 | データモデル実装 | `src/models/schedule.py`, `src/models/profile.py` | ⬜ 未着手 |
-| 1-4 | ユーティリティ実装 | `src/utils/date_utils.py`, `src/utils/logger.py` | ⬜ 未着手 |
-| 1-5 | 日時生成サービス実装 | `src/services/date_generation.py` | ⬜ 未着手 |
-| 1-6 | プロファイルサービス実装 | `src/services/profile_service.py` | ⬜ 未着手 |
-| 1-7 | プラグインシステム実装 | `src/plugins/base.py`, `src/plugins/chouseisan/plugin.py` | ⬜ 未着手 |
-| 1-8 | イベント作成サービス実装 | `src/services/event_creation.py` | ⬜ 未着手 |
-| 1-9 | Phase 1 テスト実装 | `tests/unit/` 以下 | ⬜ 未着手 |
+| 1-1 | プロジェクト初期設定 | `requirements.txt`, `main.py`, `src/__init__.py` 等 | ✅ 完了 |
+| 1-2 | 例外クラス実装 | `src/exceptions/exceptions.py` | ✅ 完了 |
+| 1-3 | データモデル実装 | `src/models/schedule.py`, `src/models/profile.py` | ✅ 完了 |
+| 1-4 | ユーティリティ実装 | `src/utils/date_utils.py`, `src/utils/logger.py` | ✅ 完了 |
+| 1-5 | 日時生成サービス実装 | `src/services/date_generation.py` | ✅ 完了 |
+| 1-6 | プロファイルサービス実装 | `src/services/profile_service.py` | ✅ 完了 |
+| 1-7 | プラグインシステム実装 | `src/plugins/base.py`, `src/plugins/chouseisan/plugin.py` | ✅ 完了 |
+| 1-8 | イベント作成サービス実装 | `src/services/event_creation.py` | ✅ 完了 |
+| 1-9 | Phase 1 テスト実装 | `tests/unit/` 以下 | ✅ 完了 |
 
 ## Phase 2: GUI実装
 
