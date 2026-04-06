@@ -20,14 +20,14 @@
 
 | # | タスク | 対象ファイル | 状態 |
 |---|---|---|---|
-| 2-1 | メインウィンドウ | `src/gui/app.py` | ⬜ 未着手 |
-| 2-2 | 再利用コンポーネント | `src/gui/components/` | ⬜ 未着手 |
-| 2-3 | Step1: 設定入力画面 | `src/gui/frames/schedule_frame.py` | ⬜ 未着手 |
-| 2-4 | Step2: 日時確認・編集画面 | `src/gui/frames/preview_frame.py` | ⬜ 未着手 |
-| 2-5 | Step3: 処理中画面 | `src/gui/frames/progress_frame.py` | ⬜ 未着手 |
-| 2-6 | Step4: 結果表示画面 | `src/gui/frames/result_frame.py` | ⬜ 未着手 |
-| 2-7 | バルクモード画面 | `src/gui/frames/bulk_frame.py` | ⬜ 未着手 |
-| 2-8 | プロファイル管理画面 | `src/gui/frames/profile_frame.py` | ⬜ 未着手 |
+| 2-1 | メインウィンドウ | `src/gui/app.py` | ✅ 完了 |
+| 2-2 | 再利用コンポーネント | `src/gui/components/` | ✅ 完了 |
+| 2-3 | Step1: 設定入力画面 | `src/gui/frames/schedule_frame.py` | ✅ 完了 |
+| 2-4 | Step2: 日時確認・編集画面 | `src/gui/frames/preview_frame.py` | ✅ 完了 |
+| 2-5 | Step3: 処理中画面 | `src/gui/frames/progress_frame.py` | ✅ 完了 |
+| 2-6 | Step4: 結果表示画面 | `src/gui/frames/result_frame.py` | ✅ 完了 |
+| 2-7 | バルクモード画面 | `src/gui/frames/bulk_frame.py` | ✅ 完了 |
+| 2-8 | プロファイル管理画面 | `src/gui/frames/profile_frame.py` | ✅ 完了 |
 
 ## 凡例
 
