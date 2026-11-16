@@ -70,10 +70,32 @@ class App(ctk.CTk):
     def _on_schedule_done(self, config: ScheduleConfig) -> None:
         """設定入力完了コールバック"""
         try:
+            if self._date_service.is_period_too_long(config) and not self._confirm_long_period(config):
+                return
             slots = self._date_service.generate(config)
             self.show_preview(config, slots)
         except AppError as e:
             self._show_error(str(e))
+
+    def _confirm_long_period(self, config: ScheduleConfig) -> bool:
+        """期間が長すぎる場合に続行してよいかユーザーに確認する。
+
+        Args:
+            config: スケジュール設定
+
+        Returns:
+            続行する場合 True
+        """
+        from tkinter import messagebox
+
+        days = self._date_service.get_period_days(config)
+        return messagebox.askyesno(
+            "期間の確認",
+            f"期間が {days} 日間（約{days // 30}か月）あります。\n"
+            "開始日・終了日の入力ミスではありませんか？\n\n"
+            "このまま候補日時を生成しますか？",
+            icon="warning",
+        )
 
     def show_preview(self, config: ScheduleConfig, slots: list[DateSlot]) -> None:
         """Step2: 日時確認・編集画面を表示する"""

@@ -3,6 +3,7 @@
 """
 import datetime
 
+from src.config.constants import MAX_PERIOD_DAYS_WITHOUT_WARNING
 from src.exceptions.exceptions import DateError, ValidationError
 from src.models.schedule import DateInfo, DateSlot, ScheduleConfig
 from src.utils.date_utils import get_date_range, get_japanese_weekday, validate_date
@@ -78,6 +79,37 @@ class DateGenerationService:
         slots.sort(key=lambda s: (s.date, s.time))
         logger.info(f"候補日時を {len(slots)} 件生成しました")
         return slots
+
+    def get_period_days(self, config: ScheduleConfig) -> int:
+        """開始日から終了日までの日数（両端を含む）を返す。
+
+        Args:
+            config: スケジュール設定
+
+        Returns:
+            期間の日数（例: 7/1〜7/31 なら 31）
+
+        Raises:
+            DateError: 存在しない日付の場合
+        """
+        crosses_year = self._crosses_year(config)
+        start = self._to_date(config.year, config.start_date)
+        end = self._resolve_date(config, config.end_date, crosses_year)
+        return (end - start).days + 1
+
+    def is_period_too_long(self, config: ScheduleConfig) -> bool:
+        """期間が警告の閾値を超えているかを判定する。
+
+        Args:
+            config: スケジュール設定
+
+        Returns:
+            閾値（MAX_PERIOD_DAYS_WITHOUT_WARNING 日）を超える場合 True
+
+        Raises:
+            DateError: 存在しない日付の場合
+        """
+        return self.get_period_days(config) > MAX_PERIOD_DAYS_WITHOUT_WARNING
 
     @staticmethod
     def _crosses_year(config: ScheduleConfig) -> bool:
