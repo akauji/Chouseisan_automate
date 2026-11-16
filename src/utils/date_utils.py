@@ -77,3 +77,36 @@ def validate_date(year: int, month: int, day: int) -> bool:
         return True
     except ValueError:
         return False
+
+
+def get_month_sequence(
+    year: int, start_month: int, end_month: int
+) -> list[tuple[int, int]]:
+    """開始月から終了月までの (年, 月) のリストを取得する。
+
+    開始月が終了月より後の場合は年をまたぐものとみなし、
+    12月の次は翌年1月として扱う（例: 2026年 11〜2月 → 2026/11, 2026/12, 2027/1, 2027/2）。
+
+    Args:
+        year: 開始月の年
+        start_month: 開始月 (1-12)
+        end_month: 終了月 (1-12)
+
+    Returns:
+        (年, 月) タプルのリスト
+
+    Raises:
+        DateError: 月が 1〜12 の範囲外の場合
+    """
+    for month in (start_month, end_month):
+        if not 1 <= month <= 12:
+            raise DateError(f"月が不正です: {month}")
+    sequence: list[tuple[int, int]] = []
+    current_year, current_month = year, start_month
+    while True:
+        sequence.append((current_year, current_month))
+        if current_month == end_month:
+            return sequence
+        current_month += 1
+        if current_month > 12:
+            current_year, current_month = current_year + 1, 1

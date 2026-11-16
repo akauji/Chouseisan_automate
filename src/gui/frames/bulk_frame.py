@@ -15,7 +15,7 @@ from src.gui.components.weekday_selector import WeekdaySelector
 from src.models.schedule import DateInfo, EventResult, ScheduleConfig, TimeSettings
 from src.services.date_generation import DateGenerationService
 from src.services.event_creation import EventCreationService
-from src.utils.date_utils import validate_date
+from src.utils.date_utils import get_month_sequence, validate_date
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -239,8 +239,10 @@ class BulkFrame(ctk.CTkScrollableFrame):
         except ValueError:
             messagebox.showwarning("入力エラー", "年・月を正しく入力してください")
             return
-        if start_month > end_month:
-            messagebox.showwarning("入力エラー", "開始月は終了月以前にしてください")
+        try:
+            months = get_month_sequence(year, start_month, end_month)
+        except AppError as e:
+            messagebox.showwarning("入力エラー", str(e))
             return
 
         self._run_btn.configure(state="disabled")
@@ -248,7 +250,7 @@ class BulkFrame(ctk.CTkScrollableFrame):
 
         def run() -> None:
             results: list[EventResult] = []
-            for month in range(start_month, end_month + 1):
+            for year, month in months:
                 last_day = calendar.monthrange(year, month)[1]
                 # 除外日：月ごとに dateinfo に変換（無効な日は除外）
                 ex_dates = [

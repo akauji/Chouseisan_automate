@@ -5,7 +5,7 @@ import datetime
 
 from src.exceptions.exceptions import DateError, ValidationError
 from src.models.schedule import DateInfo, DateSlot, ScheduleConfig
-from src.utils.date_utils import get_date_range, get_japanese_weekday
+from src.utils.date_utils import get_date_range, get_japanese_weekday, validate_date
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -29,8 +29,9 @@ class DateGenerationService:
         """
         self._validate(config)
 
-        start = datetime.date(config.year, config.start_date.month, config.start_date.day)
-        end = datetime.date(config.year, config.end_date.month, config.end_date.day)
+        start = self._to_date(config.year, config.start_date)
+        crosses_year = self._crosses_year(config)
+        end = self._resolve_date(config, config.end_date, crosses_year)
 
         if start > end:
             raise ValidationError("開始日が終了日より後です", field="start_date")
@@ -39,14 +40,12 @@ class DateGenerationService:
 
         # 除外日のセット
         excluded_set = {
-            datetime.date(config.year, d.month, d.day)
-            for d in config.excluded_dates
+            self._resolve_date(config, d, crosses_year) for d in config.excluded_dates
         }
 
         # 追加日のセット
         additional_set = {
-            datetime.date(config.year, d.month, d.day)
-            for d in config.additional_dates
+            self._resolve_date(config, d, crosses_year) for d in config.additional_dates
         }
 
         slots: list[DateSlot] = []
@@ -67,10 +66,7 @@ class DateGenerationService:
             slots.extend(time_slots)
 
         # 追加日が範囲外の場合も処理
-        for additional_date_info in config.additional_dates:
-            additional_date = datetime.date(
-                config.year, additional_date_info.month, additional_date_info.day
-            )
+        for additional_date in sorted(additional_set):
             if additional_date < start or additional_date > end:
                 if additional_date not in excluded_set:
                     weekday_jp = get_japanese_weekday(additional_date)
@@ -82,6 +78,81 @@ class DateGenerationService:
         slots.sort(key=lambda s: (s.date, s.time))
         logger.info(f"候補日時を {len(slots)} 件生成しました")
         return slots
+
+    @staticmethod
+    def _crosses_year(config: ScheduleConfig) -> bool:
+        """終了日（月日）が開始日（月日）より前なら年またぎとみなす。
+
+        Args:
+            config: スケジュール設定
+
+        Returns:
+            年をまたぐ場合 True
+        """
+        start_md = (config.start_date.month, config.start_date.day)
+        end_md = (config.end_date.month, config.end_date.day)
+        return end_md < start_md
+
+    def _resolve_date(
+        self, config: ScheduleConfig, info: DateInfo, crosses_year: bool
+    ) -> datetime.date:
+        """月日に年を補って日付に変換する。
+
+        年をまたがない場合は常に config.year を使う。
+        年をまたぐ場合は次のルールで年を決める。
+          - 開始日以降の月日 → config.year
+          - 終了日以前の月日 → 翌年
+          - その間（期間外）の月日 → 期間に近い方の年
+
+        Args:
+            config: スケジュール設定
+            info: 変換する月日
+            crosses_year: 年またぎかどうか
+
+        Returns:
+            年を補った日付
+
+        Raises:
+            DateError: 存在しない日付の場合
+        """
+        if not crosses_year:
+            return self._to_date(config.year, info)
+
+        md = (info.month, info.day)
+        if md >= (config.start_date.month, config.start_date.day):
+            return self._to_date(config.year, info)
+        if md <= (config.end_date.month, config.end_date.day):
+            return self._to_date(config.year + 1, info)
+
+        # 期間外：開始日の前（今年）と終了日の後（翌年）のうち近い方
+        start = self._to_date(config.year, config.start_date)
+        end = self._to_date(config.year + 1, config.end_date)
+        candidates: list[datetime.date] = []
+        for year in (config.year, config.year + 1):
+            if validate_date(year, info.month, info.day):
+                candidates.append(datetime.date(year, info.month, info.day))
+        if not candidates:
+            raise DateError(f"存在しない日付です: {info.month}/{info.day}")
+        return min(candidates, key=lambda d: start - d if d < start else d - end)
+
+    @staticmethod
+    def _to_date(year: int, info: DateInfo) -> datetime.date:
+        """年と月日から日付を生成する。
+
+        Args:
+            year: 年
+            info: 月日
+
+        Returns:
+            日付
+
+        Raises:
+            DateError: 存在しない日付の場合
+        """
+        try:
+            return datetime.date(year, info.month, info.day)
+        except ValueError as e:
+            raise DateError(f"存在しない日付です: {year}/{info.month}/{info.day}") from e
 
     def _generate_time_slots(
         self,
